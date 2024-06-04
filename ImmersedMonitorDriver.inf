@@ -1,0 +1,62 @@
+;
+; ImmersedMonitorDriver.inf
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System ; TODO: specify appropriate Class
+ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider    = %ManufacturerName%
+CatalogFile = ImmersedMonitorDriver.cat
+DriverVer   = ; TODO: set DriverVer in stampinf property pages
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+ImmersedMonitorDriver.sys = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName% = Standard,NT$ARCH$.10.0...16299 ; %13% support introduced in build 16299
+
+[Standard.NT$ARCH$.10.0...16299]
+%ImmersedMonitorDriver.DeviceDesc% = ImmersedMonitorDriver_Device, Root\ImmersedMonitorDriver ; TODO: edit hw-id
+
+[ImmersedMonitorDriver_Device.NT]
+CopyFiles = File_Copy
+
+[File_Copy]
+ImmersedMonitorDriver.sys
+
+;-------------- Service installation
+[ImmersedMonitorDriver_Device.NT.Services]
+AddService = ImmersedMonitorDriver,%SPSVCINST_ASSOCSERVICE%, ImmersedMonitorDriver_Service_Inst
+
+; -------------- ImmersedMonitorDriver driver install sections
+[ImmersedMonitorDriver_Service_Inst]
+DisplayName    = %ImmersedMonitorDriver.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\ImmersedMonitorDriver.sys
+
+[ImmersedMonitorDriver_Device.NT.Wdf]
+KmdfService = ImmersedMonitorDriver, ImmersedMonitorDriver_wdfsect
+
+[ImmersedMonitorDriver_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ManufacturerName = "<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "ImmersedMonitorDriver Installation Disk"
+ImmersedMonitorDriver.DeviceDesc = "ImmersedMonitorDriver Device"
+ImmersedMonitorDriver.SVCDESC = "ImmersedMonitorDriver Service"
